@@ -153,7 +153,8 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
 // executeHostSpray executes scan using host spray strategy where templates are iterated over each target
 func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*templates.Template, target provider.InputProvider) *atomic.Bool {
 	results := &atomic.Bool{}
-	wp, _ := syncutil.New(syncutil.WithSize(e.options.BulkSize + e.options.HeadlessBulkSize))
+
+	wp := newPool(e.options.BulkSize + e.options.HeadlessBulkSize) //nolint:varnamelen // wp names the pool throughout
 	defer wp.Wait()
 
 	target.Iterate(func(value *contextargs.MetaInput) bool {
